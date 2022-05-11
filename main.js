@@ -1,3 +1,6 @@
+import { InputHandler } from "./input.js";
+import { Player } from "./player.js";
+
 window.addEventListener("load", () => {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
@@ -8,11 +11,17 @@ window.addEventListener("load", () => {
     constructor(width, height) {
       this.width = width;
       this.height = height;
+      this.player = new Player(this);
+      this.input = new InputHandler(this);
     }
 
-    update() {}
+    update() {
+      this.player.update(this.input.keys);
+    }
 
-    draw(context) {}
+    draw(context) {
+      this.player.draw(context);
+    }
   }
 
   const game = new Game(canvas.width, canvas.height);
