@@ -9,9 +9,10 @@ export class Player {
     this.y = 100;
     this.color = "white";
     this.vy = 0;
-    this.weight = 1;
+    this.gravity = 1;
     this.speed = 0;
     this.maxSpeed = 6;
+    this.jumpHeight = 20;
     //STATE
     this.states = [
       new Idle(this),
@@ -24,26 +25,29 @@ export class Player {
   }
 
   update(input) {
-    this.currentState.handleInput(input);
+    //this.currentState.handleInput(input);
     //HORIZONTAL MOVEMENT
+
     this.x += this.speed;
 
-    //x bounds
-    if (this.x < 0) {
-      this.x = 0;
-    }
-    if (this.x > this.game.width - this.width) {
-      this.x = this.game.width - this.width;
+    if (input.left) {
+      this.speed = -this.maxSpeed;
+    } else if (input.right) {
+      this.speed = this.maxSpeed;
+    } else {
+      this.speed = 0;
     }
 
     //VERTICAL MOVEMENT
     this.y += this.vy;
-
-    if (!this.isGrounded()) {
-      this.vy += this.weight;
+    if (input.up && this.isGrounded()) {
+      this.vy -= this.jumpHeight;
+    } else if (!this.isGrounded()) {
+      this.vy += this.gravity;
     } else {
       this.vy = 0;
     }
+    this.checkCollisions();
   }
 
   draw(context) {
@@ -53,6 +57,17 @@ export class Player {
 
   isGrounded() {
     return this.y >= this.game.height - this.height;
+  }
+
+  checkCollisions() {
+    //x bounds
+    if (this.x <= 0) this.x = 0;
+    if (this.x > this.game.width - this.width)
+      this.x = this.game.width - this.width;
+    //y bounds
+    if (this.y >= this.game.height - this.height) {
+      this.y = this.game.height - this.height;
+    }
   }
 
   setState(state) {
