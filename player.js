@@ -25,7 +25,7 @@ export class Player {
   }
 
   update(input) {
-    //this.currentState.handleInput(input);
+    this.currentState.handleInput(input);
     //HORIZONTAL MOVEMENT
 
     this.x += this.speed;
@@ -40,13 +40,13 @@ export class Player {
 
     //VERTICAL MOVEMENT
     this.y += this.vy;
-    if (input.up && this.isGrounded()) {
-      this.vy -= this.jumpHeight;
-    } else if (!this.isGrounded()) {
+
+    if (!this.isGrounded()) {
       this.vy += this.gravity;
     } else {
       this.vy = 0;
     }
+
     this.checkCollisions();
   }
 
@@ -72,8 +72,6 @@ export class Player {
 
   setState(state) {
     this.currentState = this.states[state];
-    //console.log(this.currentState);
-
     this.currentState.enter();
   }
 }

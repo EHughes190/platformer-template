@@ -22,9 +22,9 @@ export class Idle extends State {
   enter() {}
 
   handleInput(input) {
-    if (input.includes("a") || input.includes("d")) {
+    if (input.left || input.right) {
       this.player.setState(states.RUNNING);
-    } else if (input.includes("w")) {
+    } else if (input.up) {
       this.player.setState(states.JUMPING);
     }
   }
@@ -38,19 +38,9 @@ export class Running extends State {
   enter() {}
 
   handleInput(input) {
-    if (input.includes("d")) {
-      this.player.speed = this.player.maxSpeed;
-    } else if (input.includes("a")) {
-      this.player.speed = -this.player.maxSpeed;
-    } else {
-      this.player.speed = 0;
-    }
-
     if (this.player.speed === 0) {
       this.player.setState(states.IDLE);
-    }
-
-    if (input.includes("w")) {
+    } else if (input.up) {
       this.player.setState(states.JUMPING);
     }
   }
@@ -63,13 +53,12 @@ export class Jumping extends State {
   }
   enter() {
     if (this.player.isGrounded()) {
-      this.player.vy -= 20;
-      this.player.x += this.player.speed;
+      this.player.vy -= this.player.jumpHeight;
     }
   }
 
   handleInput(input) {
-    if (this.player.vy > this.player.weight) {
+    if (this.player.vy > this.player.gravity) {
       this.player.setState(states.FALLING);
     }
   }
