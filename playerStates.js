@@ -22,10 +22,12 @@ export class Idle extends State {
   enter() {}
 
   handleInput(input) {
-    if (input.left || input.right) {
+    if ((input.left || input.right) && this.player.isGrounded()) {
       this.player.setState(states.RUNNING);
     } else if (input.up) {
       this.player.setState(states.JUMPING);
+    } else if (this.player.vy >= 0 && !this.player.isGrounded()) {
+      this.player.setState(states.FALLING);
     }
   }
 }
@@ -42,6 +44,8 @@ export class Running extends State {
       this.player.setState(states.IDLE);
     } else if (input.up) {
       this.player.setState(states.JUMPING);
+    } else if (this.player.vy >= 0 && !this.player.isGrounded()) {
+      this.player.setState(states.FALLING);
     }
   }
 }
@@ -58,7 +62,8 @@ export class Jumping extends State {
   }
 
   handleInput(input) {
-    if (this.player.vy > this.player.gravity) {
+    //If we're at the peak of the jump
+    if (this.player.vy > this.player.gravity && !this.player.isGrounded()) {
       this.player.setState(states.FALLING);
     }
   }
