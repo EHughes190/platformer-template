@@ -16,17 +16,14 @@ window.addEventListener("load", () => {
       this.platforms = [];
       this.player = new Player(this);
       this.input = new InputHandler(this);
-      this.platform = new Platform(300, 475);
     }
 
     init() {
       //platforms
-      // for (let i = 0; i < this.numberOfPlatforms; i++) {
-      //   const x = Math.floor(Math.random() * 300) + 100;
-      //   const y = Math.floor(Math.random() * 450) + 100;
-      //   this.platforms.push(new Platform(x, y));
-      //   console.log("hey");
-      // }
+      this.platforms.push(new Platform(100, 350));
+      this.platforms.push(new Platform(300, 350));
+      this.platforms.push(new Platform(500, 350));
+      this.platforms.push(new Platform(200, 250));
     }
 
     update() {
@@ -35,10 +32,9 @@ window.addEventListener("load", () => {
 
     draw(context) {
       this.player.draw(context);
-      this.platform.draw(context);
-      // this.platforms.forEach((platform) => {
-      //   platform.draw(context);
-      // });
+      this.platforms.forEach((platform) => {
+        platform.draw(context);
+      });
     }
   }
 
@@ -46,11 +42,11 @@ window.addEventListener("load", () => {
   game.init();
 
   const animate = () => {
+    requestAnimationFrame(animate);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     game.update();
     game.draw(ctx);
-    requestAnimationFrame(animate);
   };
 
   animate();

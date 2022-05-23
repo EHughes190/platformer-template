@@ -40,7 +40,7 @@ export class Running extends State {
   enter() {}
 
   handleInput(input) {
-    if (this.player.speed === 0) {
+    if (this.player.speed === 0 && this.player.isGrounded()) {
       this.player.setState(states.IDLE);
     } else if (input.up) {
       this.player.setState(states.JUMPING);
@@ -56,14 +56,15 @@ export class Jumping extends State {
     this.player = player;
   }
   enter() {
-    if (this.player.isGrounded()) {
-      this.player.vy -= this.player.jumpHeight;
-    }
+    // if (this.player.isGrounded()) {
+    //   this.player.vy -= this.player.jumpHeight;
+    // }
+    this.player.onPlatform = false;
   }
 
   handleInput(input) {
     //If we're at the peak of the jump
-    if (this.player.vy > this.player.gravity && !this.player.isGrounded()) {
+    if (this.player.vy >= 0 && !this.player.isGrounded()) {
       this.player.setState(states.FALLING);
     }
   }
