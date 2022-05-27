@@ -26,8 +26,8 @@ window.addEventListener("load", () => {
       this.platforms.push(new Platform(200, 250));
     }
 
-    update() {
-      this.player.update(this.input.keys);
+    update(deltaTime) {
+      this.player.update(this.input.keys, deltaTime);
     }
 
     draw(context) {
@@ -41,13 +41,18 @@ window.addEventListener("load", () => {
   const game = new Game(canvas.width, canvas.height);
   game.init();
 
-  const animate = () => {
-    requestAnimationFrame(animate);
+  //FPS. requestAnimationFrame has a timeStamp data which it passes to animate automatically. We can use this value to calculate deltaTime (in ms) and use this to change FPS for sprite animations. This means FPS of the screen and animations is separate
+  let lastTime = 0;
+
+  const animate = (timeStamp) => {
+    const deltaTime = timeStamp - lastTime;
+    lastTime = timeStamp;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    game.update();
     game.draw(ctx);
+    game.update(deltaTime);
+    requestAnimationFrame(animate);
   };
 
-  animate();
+  animate(0);
 });

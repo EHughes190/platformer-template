@@ -7,14 +7,15 @@ export class Player {
     this.height = 25;
     this.width = 25;
     this.x = 100;
-    this.y = this.game.height;
+    this.y = 100;
     this.color = "white";
     this.vy = 0;
     this.gravity = 1;
     this.speed = 0;
     this.maxSpeed = 6;
     this.jumpHeight = 20;
-    this.onPlatform = false;
+    this.coyoteTime = 0.1;
+    this.coyoteTimeCounter;
 
     //STATE
     this.states = [
@@ -27,26 +28,7 @@ export class Player {
     this.currentState.enter();
   }
 
-  update(input) {
-    this.handleMovement(input);
-    this.currentState.handleInput(input);
-    this.checkCollisions();
-  }
-
-  draw(context) {
-    context.fillStyle = this.color;
-    context.fillRect(this.x, this.y, this.width, this.height);
-  }
-
-  isGrounded() {
-    if (this.y >= this.game.height - this.height || this.onPlatform) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  handleMovement(input) {
+  update(input, deltaTime) {
     //HORIZONTAL MOVEMENT
     this.x += this.speed;
 
@@ -61,13 +43,20 @@ export class Player {
     //VERTICAL MOVEMENT
     this.y += this.vy;
 
-    if (this.y + this.height + this.vy <= this.game.height) {
+    if (this.y + this.height < this.game.height) {
       this.vy += this.gravity;
-      this.onPlatform = false;
     } else {
       this.vy = 0;
     }
 
+    //coyote time
+    if (this.isGrounded()) {
+      this.coyoteTimeCounter = this.coyoteTime;
+    } else {
+      this.coyoteTimeCounter -= deltaTime / 1000;
+    }
+
+    //collision logic for platforms
     this.game.platforms.forEach((platform) => {
       if (
         this.y + this.height <= platform.y &&
@@ -77,31 +66,52 @@ export class Player {
       ) {
         this.vy = 0;
         this.y = platform.y - this.height;
-        this.onPlatform = true;
       }
     });
 
-    if (this.isGrounded() && input.up) {
-      this.vy -= this.jumpHeight;
-      this.onPlatform = false;
-    }
-  }
+    this.currentState.handleInput(input);
 
-  checkCollisions() {
+    //Collision logic runs at the end of update
     //x bounds
     if (this.x <= 0) this.x = 0;
     if (this.x > this.game.width - this.width)
       this.x = this.game.width - this.width;
     //y bounds
-    if (this.y + this.vy >= this.game.height - this.height) {
+    if (this.y + this.height >= this.game.height) {
       this.y = this.game.height - this.height;
     }
   }
 
+  draw(context) {
+    context.fillStyle = this.color;
+    context.fillRect(this.x, this.y, this.width, this.height);
+  }
+
+  //Can cause issues if not used in conjunction with states
+  //If at peak of jump, vy = 0, so you could technically jump infinitely.
+  //With states, the upwards force is only applied on enter of jump state, and not anywhere else. This keeps it contained.
+  isGrounded() {
+    if (this.vy === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  handleMovement(input) {}
+
+  checkCollisions() {}
+
   setState(state) {
     this.currentState = this.states[state];
     this.currentState.enter();
-    console.log(this.currentState, this.vy, this.onPlatform, this.isGrounded());
+    console.log(
+      this.currentState,
+      this.vy,
+      this.onPlatform,
+      this.isGrounded(),
+      this.coyoteTimeCounter
+    );
   }
 
   /**

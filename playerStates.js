@@ -26,7 +26,7 @@ export class Idle extends State {
       this.player.setState(states.RUNNING);
     } else if (input.up) {
       this.player.setState(states.JUMPING);
-    } else if (this.player.vy >= 0 && !this.player.isGrounded()) {
+    } else if (!this.player.isGrounded()) {
       this.player.setState(states.FALLING);
     }
   }
@@ -44,7 +44,10 @@ export class Running extends State {
       this.player.setState(states.IDLE);
     } else if (input.up) {
       this.player.setState(states.JUMPING);
-    } else if (this.player.vy >= 0 && !this.player.isGrounded()) {
+    } else if (
+      !this.player.isGrounded() &&
+      this.player.coyoteTimeCounter <= 0
+    ) {
       this.player.setState(states.FALLING);
     }
   }
@@ -56,10 +59,7 @@ export class Jumping extends State {
     this.player = player;
   }
   enter() {
-    // if (this.player.isGrounded()) {
-    //   this.player.vy -= this.player.jumpHeight;
-    // }
-    this.player.onPlatform = false;
+    this.player.vy -= this.player.jumpHeight;
   }
 
   handleInput(input) {
