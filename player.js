@@ -1,4 +1,3 @@
-import { Platform } from "./platform.js";
 import { Idle, Running, Jumping, Falling } from "./playerStates.js";
 
 export class Player {
@@ -98,13 +97,10 @@ export class Player {
     }
   }
 
-  handleMovement(input) {}
-
-  checkCollisions() {}
-
   setState(state) {
     this.currentState = this.states[state];
     this.currentState.enter();
+    //nice place to log state changes and other values. Should be removed when game complete
     console.log(
       this.currentState,
       this.vy,
@@ -114,40 +110,41 @@ export class Player {
     );
   }
 
+  //Below a function which I have not used here for collisions, but could be of some use for more fleshed out games so I have left it here.
   /**
    *
    * @param {Player} shapeA
    * @param {Platform} shapeB
    * @returns a string determining the colliding direction relative to shapeA
    */
-  // colCheck(shapeA, shapeB) {
-  //   // get the vectors to check against
-  //   let vX = shapeA.x + shapeA.width / 2 - (shapeB.x + shapeB.width / 2),
-  //     vY = shapeA.y + shapeA.height / 2 - (shapeB.y + shapeB.height / 2),
-  //     // add the half widths and half heights of the objects
-  //     hWidths = shapeA.width / 2 + shapeB.width / 2,
-  //     hHeights = shapeA.height / 2 + shapeB.height / 2;
+  colCheck(shapeA, shapeB) {
+    // get the vectors to check against
+    let vX = shapeA.x + shapeA.width / 2 - (shapeB.x + shapeB.width / 2),
+      vY = shapeA.y + shapeA.height / 2 - (shapeB.y + shapeB.height / 2),
+      // add the half widths and half heights of the objects
+      hWidths = shapeA.width / 2 + shapeB.width / 2,
+      hHeights = shapeA.height / 2 + shapeB.height / 2;
 
-  //   // if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
-  //   if (Math.abs(vX) < hWidths && Math.abs(vY) < hHeights) {
-  //     // figures out on which side we are colliding (top, bottom, left, or right)
-  //     const oX = hWidths - Math.abs(vX),
-  //       oY = hHeights - Math.abs(vY);
-  //     if (oX >= oY) {
-  //       if (vY >= 0) {
-  //         return "t";
-  //       } else {
-  //         return "b";
-  //       }
-  //     } else {
-  //       if (vX >= 0) {
-  //         return "l";
-  //       } else {
-  //         return "r";
-  //       }
-  //     }
-  //   } else {
-  //     return null;
-  //   }
-  // }
+    // if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
+    if (Math.abs(vX) < hWidths && Math.abs(vY) < hHeights) {
+      // figures out on which side we are colliding (top, bottom, left, or right)
+      const oX = hWidths - Math.abs(vX),
+        oY = hHeights - Math.abs(vY);
+      if (oX >= oY) {
+        if (vY >= 0) {
+          return "t";
+        } else {
+          return "b";
+        }
+      } else {
+        if (vX >= 0) {
+          return "l";
+        } else {
+          return "r";
+        }
+      }
+    } else {
+      return null;
+    }
+  }
 }

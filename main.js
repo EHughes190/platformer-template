@@ -12,7 +12,6 @@ window.addEventListener("load", () => {
     constructor(width, height) {
       this.width = width;
       this.height = height;
-      this.numberOfPlatforms = 3;
       this.platforms = [];
       this.player = new Player(this);
       this.input = new InputHandler(this);
@@ -44,6 +43,7 @@ window.addEventListener("load", () => {
   //FPS. requestAnimationFrame has a timeStamp data which it passes to animate automatically. We can use this value to calculate deltaTime (in ms) and use this to change FPS for sprite animations. This means FPS of the screen and animations is separate
   let lastTime = 0;
 
+  //The workhorse of the game. Animate and request animation frame will loop this function, allowing us to re render and move objects in the game. game functions called here for draw and update.
   const animate = (timeStamp) => {
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;

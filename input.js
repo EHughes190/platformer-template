@@ -1,3 +1,5 @@
+//Registers player input and feeds to main game class.
+
 export class InputHandler {
   constructor(game) {
     this.game = game;
