@@ -2,14 +2,28 @@ import { InputHandler } from "./input.js";
 import { Platform } from "./platform.js";
 import { Player } from "./player.js";
 
+export type Game = {
+  width: number;
+  height: number;
+  platforms: Platform[];
+  player: Player;
+  input: InputHandler;
+};
+
 window.addEventListener("load", () => {
-  const canvas = document.getElementById("canvas");
+  const canvas = <HTMLCanvasElement>document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   canvas.height = 500;
   canvas.width = 1000;
 
   class Game {
-    constructor(width, height) {
+    width: number;
+    height: number;
+    platforms: Platform[];
+    player: Player;
+    input: InputHandler;
+
+    constructor(width: number, height: number) {
       this.width = width;
       this.height = height;
       this.platforms = [];
@@ -25,11 +39,11 @@ window.addEventListener("load", () => {
       this.platforms.push(new Platform(200, 250));
     }
 
-    update(deltaTime) {
+    update(deltaTime: number) {
       this.player.update(this.input.keys, deltaTime);
     }
 
-    draw(context) {
+    draw(context: CanvasRenderingContext2D) {
       this.player.draw(context);
       this.platforms.forEach((platform) => {
         platform.draw(context);
@@ -44,12 +58,14 @@ window.addEventListener("load", () => {
   let lastTime = 0;
 
   //The workhorse of the game. Animate and request animation frame will loop this function, allowing us to re render and move objects in the game. game functions called here for draw and update.
-  const animate = (timeStamp) => {
+  const animate = (timeStamp: number) => {
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx?.clearRect(0, 0, canvas.width, canvas.height);
 
-    game.draw(ctx);
+    if (ctx) {
+      game.draw(ctx);
+    }
     game.update(deltaTime);
     requestAnimationFrame(animate);
   };

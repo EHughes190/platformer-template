@@ -1,5 +1,8 @@
 //State file handles player state. Easy to extend by adding another state of choice, and changing transitions in the handleInput method. 'state' enum corresponds to the player states array indices
 
+import { keys } from "./input.js";
+import { Player } from "./player.js";
+
 const states = {
   IDLE: 0,
   RUNNING: 1,
@@ -8,20 +11,24 @@ const states = {
   HIT: 4,
 };
 
-class State {
-  constructor(state) {
+export class State {
+  state: string;
+
+  constructor(state: string) {
     this.state = state;
   }
 }
 
 export class Idle extends State {
-  constructor(player) {
+  player: Player;
+
+  constructor(player: Player) {
     super("IDLE");
     this.player = player;
   }
   enter() {}
 
-  handleInput(input) {
+  handleInput(input: keys) {
     if ((input.left || input.right) && this.player.isGrounded()) {
       this.player.setState(states.RUNNING);
     } else if (input.up) {
@@ -33,13 +40,14 @@ export class Idle extends State {
 }
 
 export class Running extends State {
-  constructor(player) {
+  player: Player;
+  constructor(player: Player) {
     super("RUNNING");
     this.player = player;
   }
   enter() {}
 
-  handleInput(input) {
+  handleInput(input: keys) {
     if (this.player.speed === 0 && this.player.isGrounded()) {
       this.player.setState(states.IDLE);
     } else if (input.up) {
@@ -54,7 +62,8 @@ export class Running extends State {
 }
 
 export class Jumping extends State {
-  constructor(player) {
+  player: Player;
+  constructor(player: Player) {
     super("JUMPING");
     this.player = player;
   }
@@ -62,7 +71,7 @@ export class Jumping extends State {
     this.player.vy -= this.player.jumpHeight;
   }
 
-  handleInput(input) {
+  handleInput(input: keys) {
     //If we're at the peak of the jump
     if (this.player.vy >= 0 && !this.player.isGrounded()) {
       this.player.setState(states.FALLING);
@@ -71,13 +80,14 @@ export class Jumping extends State {
 }
 
 export class Falling extends State {
-  constructor(player) {
+  player: Player;
+  constructor(player: Player) {
     super("FALLING");
     this.player = player;
   }
   enter() {}
 
-  handleInput(input) {
+  handleInput(input: keys) {
     if (this.player.isGrounded()) {
       if (this.player.speed === 0) {
         this.player.setState(states.IDLE);

@@ -1,7 +1,18 @@
 //Registers player input and feeds to main game class.
 
+import { Game } from "./main.js";
+
+export type keys = {
+  left: boolean;
+  right: boolean;
+  up: boolean;
+};
+
 export class InputHandler {
-  constructor(game) {
+  game: Game;
+  keys: keys;
+
+  constructor(game: Game) {
     this.game = game;
     this.keys = {
       left: false,

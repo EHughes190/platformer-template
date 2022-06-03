@@ -1,7 +1,26 @@
+import { keys } from "./input.js";
+import { Game } from "./main.js";
+import { Platform } from "./platform.js";
 import { Idle, Running, Jumping, Falling } from "./playerStates.js";
 
 export class Player {
-  constructor(game) {
+  game: Game;
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+  color: string;
+  vy: number;
+  gravity: number;
+  speed: number;
+  maxSpeed: number;
+  jumpHeight: number;
+  coyoteTime: number;
+  coyoteTimeCounter: number;
+  states: [Idle, Running, Jumping, Falling];
+  currentState: Idle | Running | Jumping | Falling;
+
+  constructor(game: Game) {
     this.game = game;
     this.height = 25;
     this.width = 25;
@@ -14,7 +33,7 @@ export class Player {
     this.maxSpeed = 6;
     this.jumpHeight = 20;
     this.coyoteTime = 0.1;
-    this.coyoteTimeCounter;
+    this.coyoteTimeCounter = 0;
 
     //STATE
     this.states = [
@@ -27,7 +46,7 @@ export class Player {
     this.currentState.enter();
   }
 
-  update(input, deltaTime) {
+  update(input: keys, deltaTime: number) {
     //HORIZONTAL MOVEMENT
     this.x += this.speed;
 
@@ -81,7 +100,7 @@ export class Player {
     }
   }
 
-  draw(context) {
+  draw(context: CanvasRenderingContext2D) {
     context.fillStyle = this.color;
     context.fillRect(this.x, this.y, this.width, this.height);
   }
@@ -97,14 +116,13 @@ export class Player {
     }
   }
 
-  setState(state) {
+  setState(state: number) {
     this.currentState = this.states[state];
     this.currentState.enter();
     //nice place to log state changes and other values. Should be removed when game complete
     console.log(
       this.currentState,
       this.vy,
-      this.onPlatform,
       this.isGrounded(),
       this.coyoteTimeCounter
     );
@@ -117,7 +135,7 @@ export class Player {
    * @param {Platform} shapeB
    * @returns a string determining the colliding direction relative to shapeA
    */
-  colCheck(shapeA, shapeB) {
+  colCheck(shapeA: Player, shapeB: Platform) {
     // get the vectors to check against
     let vX = shapeA.x + shapeA.width / 2 - (shapeB.x + shapeB.width / 2),
       vY = shapeA.y + shapeA.height / 2 - (shapeB.y + shapeB.height / 2),
